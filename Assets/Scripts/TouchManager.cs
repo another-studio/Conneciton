@@ -86,6 +86,8 @@ public class TouchManager : MonoBehaviour
                 }else{
                     CreateConnection();
                 }
+            }else if(hit.collider != null && hit.collider.gameObject.CompareTag("Cell") && selectedObjects.Count > 1 && IsDoubleTap() == true){
+                Group();
             }
             else if (hit.collider == null && !isSelecting)
             {
@@ -102,7 +104,7 @@ public class TouchManager : MonoBehaviour
                 OnCellDeselect();   
                 selectedObjects.Clear();
             }
-            isTouching = true;
+            isTouching = true;            
         }
        
         if(isMultiSelecting == true){
@@ -232,9 +234,16 @@ public class TouchManager : MonoBehaviour
         //Moving a single
         if (isSelecting && isTouching && selectedObjects[0] != null && selectedObjects.Count == 1 && isConnecting == false){       
             RaycastHit2D hit = Physics2D.Raycast(position, Vector2.zero);
+            if(parentObject == null)
+                parentObject = new GameObject();
 
-            if (hit.collider.gameObject == selectedObjects[0].gameObject)
-                selectedObjects[0].transform.position = Vector3.Lerp(selectedObjects[0].transform.position, position, moveSpeed * Time.deltaTime);
+            parentObject.transform.position = position;
+            for (int i = 0; i < selectedObjects.Count; i++){
+                selectedObjects[i].transform.SetParent(parentObject.transform);
+            }
+
+            if (hit.collider != null && hit.collider.gameObject == selectedObjects[0].gameObject)
+                parentObject.transform.position = Vector3.Lerp(parentObject.transform.position, position, moveSpeed * Time.deltaTime);
         }
 
         //Moving multiple at once
@@ -391,4 +400,12 @@ public class TouchManager : MonoBehaviour
         Debug.Log("was not a double tap");
         return false;
     }
+
+    public void onMultiSelect(){
+        isMultiSelecting = !isMultiSelecting;
+        OnCellDeselect();   
+        selectedObjects.Clear();
+    }
+
+
 }

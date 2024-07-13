@@ -30,7 +30,7 @@ public class LineRendererWithShadow : MonoBehaviour
 
         // Ensure the shadow is rendered behind the main line
         shadowLineRenderer.sortingLayerID = mainLineRenderer.sortingLayerID;
-        shadowLineRenderer.sortingOrder = mainLineRenderer.sortingOrder - 1;
+        shadowLineRenderer.sortingOrder = mainLineRenderer.sortingOrder - 3;
     }
 
     void Update()

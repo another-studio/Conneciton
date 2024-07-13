@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Cell
   - UI
+  - Line
   layers:
   - Default
   - TransparentFX
