@@ -66,8 +66,10 @@ public class TouchManager : MonoBehaviour
     }
 
     private void OnTouchStarted(InputAction.CallbackContext context)
-    {   
-        if(ClickedOnUi() == false && isConnecting == false && isMultiSelecting == false){  
+    {
+        if (Touchscreen.current.touches.Count == 1)
+        {
+            if (ClickedOnUi() == false && isConnecting == false && isMultiSelecting == false){  
             Vector3 position = Camera.main.ScreenToWorldPoint(touchPositionAction.ReadValue<Vector2>());
             position.z = 0;
 
@@ -105,12 +107,12 @@ public class TouchManager : MonoBehaviour
                 selectedObjects.Clear();
             }
             isTouching = true;            
-        }
+            }
        
-        if(isMultiSelecting == true){
-            StartDrag();
+            if(isMultiSelecting == true){
+                StartDrag();
+            }
         }
-
     }
 
     private void OnTouchCanceled(InputAction.CallbackContext context)
