@@ -6,6 +6,8 @@ using TMPro; // Required for accessing UI components
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using Unity.VisualScripting; // Required for UI elements
+using enhancedTouch = UnityEngine.InputSystem.EnhancedTouch;
+
 
 public class TouchManager : MonoBehaviour
 {
@@ -54,6 +56,7 @@ public class TouchManager : MonoBehaviour
         touchPositionAction = playerInput.actions.FindAction("TouchPosition");
         doubleTapAction = playerInput.actions.FindAction("DoubleTap");
         touchIndex = playerInput.actions.FindAction("NumberOfTouches");
+        enhancedTouch.EnhancedTouchSupport.Enable();
 
     }
 
@@ -71,7 +74,8 @@ public class TouchManager : MonoBehaviour
 
     private void OnTouchStarted(InputAction.CallbackContext context)
     {
-        
+        if(enhancedTouch.Touch.activeTouches.Count < 2)
+        {
             if (ClickedOnUi() == false && isConnecting == false && isMultiSelecting == false){  
             Vector3 position = Camera.main.ScreenToWorldPoint(touchPositionAction.ReadValue<Vector2>());
             position.z = 0;
@@ -116,7 +120,7 @@ public class TouchManager : MonoBehaviour
             if(isMultiSelecting == true){
                 StartDrag();
             }
-        
+        }
     }
 
     private void OnTouchCanceled(InputAction.CallbackContext context)
@@ -140,7 +144,7 @@ public class TouchManager : MonoBehaviour
             inputField.ActivateInputField();
         }
 
-        if (isMultiSelecting == true){
+        if (isDragging == true){
             EndDrag();
         }
 
@@ -161,9 +165,12 @@ public class TouchManager : MonoBehaviour
 
     private void CreateCell(InputAction.CallbackContext context)
     {
-        Vector3 position = Camera.main.ScreenToWorldPoint(touchPositionAction.ReadValue<Vector2>());
-        position.z = 0;
-        currentCell = Instantiate(cellPrefab, position, Quaternion.identity);
+        if(enhancedTouch.Touch.activeTouches.Count < 2)
+        {
+            Vector3 position = Camera.main.ScreenToWorldPoint(touchPositionAction.ReadValue<Vector2>());
+            position.z = 0;
+            currentCell = Instantiate(cellPrefab, position, Quaternion.identity);
+        }
     }
 
     private void OnCellSelect(InputAction.CallbackContext context)
@@ -236,7 +243,7 @@ public class TouchManager : MonoBehaviour
         Vector3 position = Camera.main.ScreenToWorldPoint(touchPositionAction.ReadValue<Vector2>());
         position.z = 0;
 
-        if (isCreating && currentCell != null)
+        if (isCreating && currentCell != null && enhancedTouch.Touch.activeTouches.Count < 2)
         {
             float touchDuration = Time.time - touchStartTime;
             float scaleMultiplier = Mathf.Lerp(minSize, maxSize, touchDuration);
