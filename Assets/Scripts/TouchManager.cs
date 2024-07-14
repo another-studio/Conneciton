@@ -13,13 +13,15 @@ public class TouchManager : MonoBehaviour
     private InputAction touchPositionAction;
     private InputAction touchPressAction;
     private InputAction doubleTapAction;
+    private InputAction touchIndex;
 
     public GameObject cellPrefab;
     private GameObject currentCell;
     private GameObject connectingCell;
     public GameObject selectionZonePrefab; // Prefab or GameObject for visualizing selection zone
     private GameObject selectionZoneInstance; // Instance of the selection zone visualization
-    private GameObject parentObject; 
+    private GameObject parentObject;
+    public GameObject multiSelectButton;
     private List<Cell> hoveredOverCell = new List<Cell>();
     public List<GameObject> selectedObjects = new List<GameObject>();
 
@@ -51,6 +53,8 @@ public class TouchManager : MonoBehaviour
         touchPressAction = playerInput.actions.FindAction("TouchPress");
         touchPositionAction = playerInput.actions.FindAction("TouchPosition");
         doubleTapAction = playerInput.actions.FindAction("DoubleTap");
+        touchIndex = playerInput.actions.FindAction("NumberOfTouches");
+
     }
 
     private void OnEnable()
@@ -67,8 +71,7 @@ public class TouchManager : MonoBehaviour
 
     private void OnTouchStarted(InputAction.CallbackContext context)
     {
-        if (Touchscreen.current.touches.Count == 1)
-        {
+        
             if (ClickedOnUi() == false && isConnecting == false && isMultiSelecting == false){  
             Vector3 position = Camera.main.ScreenToWorldPoint(touchPositionAction.ReadValue<Vector2>());
             position.z = 0;
@@ -88,7 +91,8 @@ public class TouchManager : MonoBehaviour
                 }else{
                     CreateConnection();
                 }
-            }else if(hit.collider != null && hit.collider.gameObject.CompareTag("Cell") && selectedObjects.Count > 1 && IsDoubleTap() == true){
+            }
+            else if(hit.collider != null && hit.collider.gameObject.CompareTag("Cell") && selectedObjects.Count > 1 && IsDoubleTap() == true){
                 Group();
             }
             else if (hit.collider == null && !isSelecting)
@@ -112,26 +116,31 @@ public class TouchManager : MonoBehaviour
             if(isMultiSelecting == true){
                 StartDrag();
             }
-        }
+        
     }
 
     private void OnTouchCanceled(InputAction.CallbackContext context)
     {
+        TMP_InputField inputField = null;
         Vector3 position = Camera.main.ScreenToWorldPoint(touchPositionAction.ReadValue<Vector2>());
         position.z = 0;
         RaycastHit2D hit = Physics2D.Raycast(position, Vector2.zero);
 
         isTouching = false;
         isCreating = false;
-        
-        TMP_InputField inputField = currentCell.GetComponentInChildren<TMP_InputField>();
+
+        if(currentCell != null)
+        {
+            inputField = currentCell.GetComponentInChildren<TMP_InputField>();
+        }
+
         if (inputField != null)
         {
             inputField.Select();
             inputField.ActivateInputField();
         }
 
-        if(isMultiSelecting == true){
+        if (isMultiSelecting == true){
             EndDrag();
         }
 
@@ -147,8 +156,8 @@ public class TouchManager : MonoBehaviour
         {
             isConnecting = false;
         }
-    }
-
+        
+   }
 
     private void CreateCell(InputAction.CallbackContext context)
     {
@@ -223,6 +232,7 @@ public class TouchManager : MonoBehaviour
 
     private void Update()
     {
+        multiSelectButton.SetActive(!isMultiSelecting);
         Vector3 position = Camera.main.ScreenToWorldPoint(touchPositionAction.ReadValue<Vector2>());
         position.z = 0;
 

@@ -58,6 +58,15 @@
                     "processors": "",
                     "interactions": "Press",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "NumberOfTouches",
+                    "type": "Value",
+                    "id": "6869b766-9114-4924-acb9-53b9252e73e1",
+                    "expectedControlType": "Integer",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -124,6 +133,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "SecondaryFingerContact",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4ed5d00f-21cf-484e-9942-f719ffe754f6",
+                    "path": "<Touchscreen>/displayIndex",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "NumberOfTouches",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

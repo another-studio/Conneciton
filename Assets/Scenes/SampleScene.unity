@@ -412,7 +412,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.9882353, g: 1, b: 0.92156863, a: 0}
+  m_BackGroundColor: {r: 1, g: 1, b: 1, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -1362,6 +1362,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cellPrefab: {fileID: 5918778755350961250, guid: b153f220c2be95d4f8e2febd6f4d20a3, type: 3}
   selectionZonePrefab: {fileID: 8268077906666011891, guid: bbb7d6525a4279f47a9d187851643e8f, type: 3}
+  multiSelectButton: {fileID: 640987844}
   selectedObjects: []
   singleSelectUI: {fileID: 306030970}
   lineRenderer: {fileID: 2092600686}
