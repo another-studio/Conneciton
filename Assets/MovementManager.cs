@@ -23,7 +23,6 @@ public class MovementManager : MonoBehaviour
     private bool isPanning;
     private float initialDistance;
 
-    public Toggle isPanningToggle;
 
     private void Awake()
     {

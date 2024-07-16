@@ -130,10 +130,7 @@ public class TouchManager : MonoBehaviour
         position.z = 0;
         RaycastHit2D hit = Physics2D.Raycast(position, Vector2.zero);
 
-        isTouching = false;
-        isCreating = false;
-
-        if(currentCell != null)
+        if(currentCell != null && isCreating)
         {
             inputField = currentCell.GetComponentInChildren<TMP_InputField>();
         }
@@ -160,6 +157,12 @@ public class TouchManager : MonoBehaviour
         {
             isConnecting = false;
         }
+
+        isTouching = false;
+        isCreating = false;
+
+
+
         
    }
 
@@ -301,6 +304,7 @@ public class TouchManager : MonoBehaviour
             RaycastHit2D hit = Physics2D.Raycast(position, Vector2.zero); 
         }
 
+        //Hover while connecting a single
         if(isTouching){
             RaycastHit2D hit = Physics2D.Raycast(position, Vector2.zero); 
             if(isConnecting && hit.collider != null && hit.collider.gameObject.CompareTag("Cell") && hit.collider.gameObject != connectingCell.gameObject)
@@ -316,14 +320,12 @@ public class TouchManager : MonoBehaviour
                     hoveredOverCell[0].isHoveredOver = false;
                     hoveredOverCell.Clear();
                }
-
             }
         }else{
-            if(hoveredOverCell.Count > 0){
-                foreach(Cell cell in hoveredOverCell){
-                    cell.isHoveredOver = false;
+            
+            for(int i = 0; i < hoveredOverCell.Count; i++){
+                    hoveredOverCell[i].isHoveredOver = false;
                 }
-            }    
             hoveredOverCell.Clear();
         }
 
@@ -336,14 +338,20 @@ public class TouchManager : MonoBehaviour
             Collider2D[] hits = Physics2D.OverlapBoxAll(center, size, 0f);
 
             for(int i = 0; i < hits.Length; i++){
-                if(!hoveredOverCell.Contains(hits[i].GetComponent<Cell>()))
-                    hoveredOverCell.Add(hits[i].GetComponent<Cell>());
-
-               hits[i].GetComponent<Cell>().isHoveredOver = true;
-                
+                if(hits[i].gameObject.CompareTag("Cell")){
+                    hoveredOverCell.Add(hits[i].transform.GetComponent<Cell>());
+                    hits[i].transform.GetComponent<Cell>().isHoveredOver = true;
+                }
+            }
+        }else{
+            if(!isTouching){
+                for(int i = 0; i < hoveredOverCell.Count; i++){
+                    hoveredOverCell[i].isHoveredOver = false;
+                }
+                hoveredOverCell.Clear();
             }
         }
-
+        
 
 
     }
@@ -363,14 +371,16 @@ public class TouchManager : MonoBehaviour
         Vector2 center = (dragStartPosition + dragEndPosition) / 2f;
         Vector2 size = new Vector2(Mathf.Abs(dragEndPosition.x - dragStartPosition.x), Mathf.Abs(dragEndPosition.y - dragStartPosition.y));
         Collider2D[] hits = Physics2D.OverlapBoxAll(center, size, 0f);
-
+      
 
         selectedObjects.Clear();
         foreach (Collider2D hit in hits)
         {
-            selectedObjects.Add(hit.gameObject);
-            hit.gameObject.GetComponent<Cell>().isSelected = true;
-            isSelecting = true;
+            if(hit.CompareTag("Cell")){
+                selectedObjects.Add(hit.gameObject);
+                hit.gameObject.GetComponent<Cell>().isSelected = true;
+                isSelecting = true;
+            }
         }
         isMultiSelecting = false;
         Destroy(selectionZoneInstance);
